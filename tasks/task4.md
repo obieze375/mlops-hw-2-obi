@@ -352,11 +352,9 @@ PromQL hint patterns — fill in metric names yourself:
 
 ## Submission
 
-Submit a `submissions/task4/` directory with:
+Submit a `*.zip` file with the four edited files:
 
-1. **`dashboard.png`** — screenshot of the full live-monitoring Grafana dashboard with all 11 panels showing data, taken after sending the mixed traffic above.
-2. **`diff.patch`** — `git diff` of your changes against the initial commit (`git diff <initial_sha> -- > diff.patch`).
-3. **`writeup.md`** — 5–8 sentences answering:
-   - In your traffic test, did cheap refusal-rate and judge leakage-rate agree?
-   - If they diverged, what was the cause — a partial leak the bot produced, an over-refusal, or judge noise on a small sample?
-   - Which metric type (Counter / Histogram / Gauge) did you pick for each new metric, and one sentence per choice on why.
+- **`src/monitoring/metrics.py`** — new metric definitions.
+- **`src/assistant/service.py`** — `.inc()` / `.observe()` call sites.
+- **`src/monitoring/judge_worker.py`** — judge-side metrics.
+- **`observability/grafana/dashboards/live_monitoring.json`** — PromQL for the three empty panels.

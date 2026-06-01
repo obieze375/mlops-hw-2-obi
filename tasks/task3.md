@@ -66,3 +66,11 @@ Invoke-RestMethod -Method POST http://localhost:8000/admin/reload
 ```
 
 The service follows the new alias target on the next request; the `assistant_info` Prometheus row should show your new version (visible in Grafana's "Current deployment" panel if you've done Task 4). Alternatively, just restart uvicorn — same effect, brief service downtime.
+
+## Submission
+
+Submit a `*.zip` file with:
+
+- **`configs/v6.yaml`** — your config.
+- **`promotion-log.jsonl`** — must contain a line with `"to": "v6"` and `"op": "set"`. (The file is gitignored, so grab it from the repo root after running `promote.py`.)
+- Any **`prompts/*.txt`** files you created or edited for v6. Skip this if you reused existing prompts unchanged.
