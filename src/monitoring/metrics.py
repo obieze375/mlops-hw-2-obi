@@ -7,12 +7,6 @@ Three signal classes (see STUDENT_README.md):
 - Cheap signals: emitted from /chat on every request.
 - State signals (gauges): point-in-time view of the service.
 - Sampled signals: emitted by the async judge worker.
-
-NOTE FOR STUDENTS (Task 4): several metric definitions have been removed —
-you'll find them as `# TODO (Task 4)` comments below. Define each Counter
-or Histogram following the existing `chat_requests_total` example, then
-wire them up at the right call sites in src/assistant/service.py and
-src/monitoring/judge_worker.py (also marked with TODO comments there).
 """
 
 from __future__ import annotations
@@ -39,16 +33,26 @@ chat_cost_usd_total = Counter(
     ["config_id", "model"],
 )
 
-# TODO (Task 4): define `chat_request_duration_seconds`.
-# Histogram, labels = ("config_id",), buckets covering ~100ms to ~30s.
-# Used by the request-latency p50/p95/p99 Grafana panel via histogram_quantile.
-# Observe once per request, in the /chat handler's `finally:` block.
+chat_request_duration_seconds = Histogram(
+    "chat_request_duration_seconds",
+    "End-to-end /chat request latency in seconds.",
+    ["config_id"],
+    buckets=(0.1, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0),
+)
 
-# TODO (Task 4): define `chat_input_tokens` and `chat_output_tokens`.
-# Histograms, labels = ("config_id", "model").
-# Observe per ModelCall in /chat. Useful for token-size analysis and cost
-# attribution; not used directly by any required panel but informative for
-# inspection in Prometheus.
+chat_input_tokens = Histogram(
+    "chat_input_tokens",
+    "Input tokens per model call within a /chat request.",
+    ["config_id", "model"],
+    buckets=(16, 64, 256, 1024, 4096, 16384),
+)
+
+chat_output_tokens = Histogram(
+    "chat_output_tokens",
+    "Output tokens per model call within a /chat request.",
+    ["config_id", "model"],
+    buckets=(8, 32, 128, 512, 2048),
+)
 
 # --- State signals (gauges) --------------------------------------------------
 
@@ -74,20 +78,23 @@ assistant_info = Gauge(
         "config_id",
         "model",
         "guardrail_type",
-        "model_name",       # MLflow registered model name; "local" in dev mode
-        "model_alias",      # which Registry alias the service resolved; "dev" in dev mode
-        "model_version",    # registered version number; "n/a" in dev mode
+        "model_name",
+        "model_alias",
+        "model_version",
     ],
 )
 
 # --- Sampled signals (async worker emits) ------------------------------------
 
-# TODO (Task 4): define `judge_evaluations_total`.
-# Counter, labels = ("config_id", "verdict"). `verdict` values include
-# "answered_correctly", "refused_correctly", "leaked", "over_refused",
-# "judge_error". Used by the DIVERGENCE panel (leakage rate from judge) and
-# the Judge-verdicts panel. Increment in src/monitoring/judge_worker.py.
+judge_evaluations_total = Counter(
+    "judge_evaluations_total",
+    "Completed deep-judge evaluations on sampled /chat traffic.",
+    ["config_id", "verdict"],
+)
 
-# TODO (Task 4): define `judge_latency_seconds`.
-# Histogram, labels = ("config_id",), buckets covering ~0.5s to ~30s.
-# Observe once per judge call in src/monitoring/judge_worker.py.
+judge_latency_seconds = Histogram(
+    "judge_latency_seconds",
+    "Latency of a single deep-judge LLM call in seconds.",
+    ["config_id"],
+    buckets=(0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0),
+)
