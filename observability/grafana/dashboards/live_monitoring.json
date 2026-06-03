@@ -1,5 +1,7 @@
 {
-  "annotations": {"list": []},
+  "annotations": {
+    "list": []
+  },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -7,13 +9,37 @@
   "links": [],
   "panels": [
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "id": 1,
       "title": "Refusal rate by input_category (5m rolling)",
       "type": "timeseries",
-      "fieldConfig": {"defaults": {"unit": "percentunit", "min": 0, "max": 1}, "overrides": []},
-      "options": {"legend": {"showLegend": true, "placement": "bottom", "displayMode": "list"}, "tooltip": {"mode": "multi"}},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom",
+          "displayMode": "list"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
       "targets": [
         {
           "refId": "A",
@@ -23,24 +49,81 @@
       ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 9, "w": 12, "x": 0, "y": 8},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
       "id": 2,
       "title": "DIVERGENCE: cheap refusal-rate vs judge leakage-rate",
-      "description": "[Task 4 — implement] Cheap refusal-rate is exact-match on the canned refusal string (100% of traffic, 5m window). Judge leakage-rate is the deep judge on sampled traffic (1h window). When they diverge — cheap says 'refused' but judge says 'leaked' — you've shipped a regression. YOUR TASK: write PromQL for both series; see the PromQL primer in tasks/task4.md.",
+      "description": "Cheap refusal-rate from chat_requests_total (100% of traffic, 5m window). Judge leakage-rate from judge_evaluations_total on sampled traffic (1h window).",
       "type": "timeseries",
-      "fieldConfig": {"defaults": {"unit": "percentunit", "min": 0, "max": 1}, "overrides": []},
-      "options": {"legend": {"showLegend": true, "placement": "bottom", "displayMode": "list"}, "tooltip": {"mode": "multi"}},
-      "targets": []
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom",
+          "displayMode": "list"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(chat_requests_total{refused=\"true\"}[5m])) / sum(rate(chat_requests_total[5m]))",
+          "legendFormat": "cheap refusal-rate"
+        },
+        {
+          "refId": "B",
+          "expr": "sum(rate(judge_evaluations_total{verdict=\"leaked\"}[1h])) / sum(rate(judge_evaluations_total[1h]))",
+          "legendFormat": "judge leakage-rate"
+        }
+      ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 9, "w": 12, "x": 12, "y": 8},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
       "id": 3,
       "title": "Request rate by config",
       "type": "timeseries",
-      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []},
-      "options": {"legend": {"showLegend": true, "placement": "bottom", "displayMode": "list"}, "tooltip": {"mode": "multi"}},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom",
+          "displayMode": "list"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
       "targets": [
         {
           "refId": "A",
@@ -50,25 +133,85 @@
       ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 9, "w": 12, "x": 0, "y": 17},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
       "id": 4,
       "title": "Request latency (p50 / p95 / p99) by config",
-      "description": "[Task 4 — implement] End-to-end /chat latency quantiles, sliced by config_id. Reads from the chat_request_duration_seconds Histogram you'll define. YOUR TASK: write three histogram_quantile queries (0.5, 0.95, 0.99) — see the PromQL primer in tasks/task4.md for the standard pattern.",
+      "description": "End-to-end /chat latency quantiles from chat_request_duration_seconds.",
       "type": "timeseries",
-      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
-      "options": {"legend": {"showLegend": true, "placement": "bottom", "displayMode": "list"}, "tooltip": {"mode": "multi"}},
-      "targets": []
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom",
+          "displayMode": "list"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.5, sum by (le, config_id) (rate(chat_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "p50 {{config_id}}"
+        },
+        {
+          "refId": "B",
+          "expr": "histogram_quantile(0.95, sum by (le, config_id) (rate(chat_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "p95 {{config_id}}"
+        },
+        {
+          "refId": "C",
+          "expr": "histogram_quantile(0.99, sum by (le, config_id) (rate(chat_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "p99 {{config_id}}"
+        }
+      ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 9, "w": 12, "x": 12, "y": 17},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
       "id": 5,
       "title": "Burn rate ($/hour) by model",
       "description": "Cumulative USD spend rate converted to $/hour, sliced by model. Reads from chat_cost_usd_total.",
       "type": "timeseries",
-      "fieldConfig": {"defaults": {"unit": "currencyUSD"}, "overrides": []},
-      "options": {"legend": {"showLegend": true, "placement": "bottom", "displayMode": "list"}, "tooltip": {"mode": "multi"}},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom",
+          "displayMode": "list"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
       "targets": [
         {
           "refId": "A",
@@ -78,70 +221,269 @@
       ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 26},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 26
+      },
       "id": 6,
       "title": "In-flight requests",
       "type": "stat",
-      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 50}, {"color": "red", "value": 200}]}}, "overrides": []},
-      "options": {"colorMode": "value", "graphMode": "area", "reduceOptions": {"calcs": ["lastNotNull"]}},
-      "targets": [{"refId": "A", "expr": "in_flight_requests"}]
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 200
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "in_flight_requests"
+        }
+      ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 6, "w": 6, "x": 6, "y": 26},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 26
+      },
       "id": 7,
       "title": "Deep judge queue depth",
       "description": "If this grows monotonically, the async judge worker is falling behind sampled traffic.",
       "type": "stat",
-      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 100}, {"color": "red", "value": 500}]}}, "overrides": []},
-      "options": {"colorMode": "value", "graphMode": "area", "reduceOptions": {"calcs": ["lastNotNull"]}},
-      "targets": [{"refId": "A", "expr": "deep_judge_queue_depth"}]
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 500
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "deep_judge_queue_depth"
+        }
+      ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 6, "w": 6, "x": 12, "y": 26},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 26
+      },
       "id": 8,
       "title": "Judge sample rate",
       "type": "stat",
-      "fieldConfig": {"defaults": {"unit": "percentunit", "min": 0, "max": 1}, "overrides": []},
-      "options": {"colorMode": "value", "reduceOptions": {"calcs": ["lastNotNull"]}},
-      "targets": [{"refId": "A", "expr": "judge_sample_rate"}]
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "judge_sample_rate"
+        }
+      ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 6, "w": 6, "x": 18, "y": 26},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 26
+      },
       "id": 9,
       "title": "Current deployment",
-      "description": "assistant_info — labels describe what's deployed.",
+      "description": "assistant_info \u2014 labels describe what's deployed.",
       "type": "table",
-      "fieldConfig": {"defaults": {}, "overrides": []},
-      "options": {"showHeader": true},
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true
+      },
       "transformations": [
-        {"id": "labelsToFields", "options": {"valueLabel": ""}},
-        {"id": "organize", "options": {"excludeByName": {"Time": true, "Value": true, "__name__": true, "instance": true, "job": true}}}
+        {
+          "id": "labelsToFields",
+          "options": {
+            "valueLabel": ""
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            }
+          }
+        }
       ],
-      "targets": [{"refId": "A", "expr": "assistant_info", "format": "table", "instant": true}]
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "assistant_info",
+          "format": "table",
+          "instant": true
+        }
+      ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
       "id": 10,
       "title": "Judge verdicts (1h rolling)",
-      "description": "[Task 4 — implement] Rate of each judge verdict (answered_correctly / refused_correctly / leaked / over_refused / judge_error), 1h rolling window, sliced by verdict. Reads from the judge_evaluations_total Counter you'll define. YOUR TASK: write the PromQL — sum by (verdict) of rate(...[1h]).",
+      "description": "Rate of each judge verdict from judge_evaluations_total (1h rolling).",
       "type": "timeseries",
-      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
-      "options": {"legend": {"showLegend": true, "placement": "bottom", "displayMode": "list"}, "tooltip": {"mode": "multi"}},
-      "targets": []
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom",
+          "displayMode": "list"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (verdict) (rate(judge_evaluations_total[1h]))",
+          "legendFormat": "{{verdict}}"
+        }
+      ]
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
       "id": 11,
       "title": "LLM API error rate by type",
       "type": "timeseries",
-      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
-      "options": {"legend": {"showLegend": true, "placement": "bottom", "displayMode": "list"}, "tooltip": {"mode": "multi"}},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom",
+          "displayMode": "list"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
       "targets": [
         {
           "refId": "A",
@@ -153,12 +495,19 @@
   ],
   "refresh": "10s",
   "schemaVersion": 38,
-  "tags": ["travel-assistant"],
-  "templating": {"list": []},
-  "time": {"from": "now-30m", "to": "now"},
+  "tags": [
+    "travel-assistant"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
   "timepicker": {},
   "timezone": "",
-  "title": "Travel Assistant — Live Monitoring",
+  "title": "Travel Assistant \u2014 Live Monitoring",
   "uid": "travel-live",
   "version": 1,
   "weekStart": ""
